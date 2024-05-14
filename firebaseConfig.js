@@ -2,14 +2,14 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBpBfVmnIpganb9-rs1PAujuewC-IAy1EU",
-  authDomain: "medical-consultation-5aaf2.firebaseapp.com",
-  projectId: "medical-consultation-5aaf2",
-  storageBucket: "medical-consultation-5aaf2.appspot.com",
-  messagingSenderId: "1071093228336",
-  appId: "1:1071093228336:web:2b60be2afffe5b2be3def5"
+  apiKey: "AIzaSyAvJ8DTjoIkmJUPvV26FsP83Cncg5sY2tw",
+  authDomain: "project-bpm-32bbc.firebaseapp.com",
+  projectId: "project-bpm-32bbc",
+  storageBucket: "project-bpm-32bbc.appspot.com",
+  messagingSenderId: "639579793270",
+  appId: "1:639579793270:web:719c4954d26e1ce64c7c57",
+  measurementId: "G-1C0ZVQSZ9D"
 };
-
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

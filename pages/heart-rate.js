@@ -18,6 +18,7 @@ export default function HeartRate() {
   const [bufferIndex, setBufferIndex] = useState(0);
   const [showFinalBpm, setShowFinalBpm] = useState(false);
   const [patientData, setPatientData] = useState(null);
+  const [conditionState, setConditionState] = useState('');
 
   useEffect(() => {
     const socket = io('http://localhost:5000');
@@ -51,7 +52,7 @@ export default function HeartRate() {
         console.error('Error fetching patient data:', error);
       }
     };
-
+    
     fetchPatientData();
 
     return () => {
@@ -60,6 +61,42 @@ export default function HeartRate() {
 
   }, []);
 
+  const calculateConditionState = (finalBpm) => {
+  let conditionState = '';
+      if (patientData && patientData.gender === 'male') {
+        if (patientData.age >= 18 && patientData.age <= 25) {
+            conditionState = finalBpm <= 55 ? 'Athlete' : finalBpm <= 61 ? 'Below Average' : finalBpm <= 65 ? 'Great' : finalBpm <= 69 ? 'Great' : finalBpm <= 73 ? 'Average' : finalBpm <= 81 ? 'Below Average' : 'Poor';
+        } else if (patientData.age >= 26 && patientData.age <= 35) {
+            conditionState = finalBpm <= 54 ? 'Athlete' : finalBpm <= 61 ? 'Below Average' : finalBpm <= 65 ? 'Great' : finalBpm <= 70 ? 'Great' : finalBpm <= 74 ? 'Average' : finalBpm <= 81 ? 'Below Average' : 'Poor';
+        } else if (patientData.age >= 36 && patientData.age <= 45) {
+            conditionState = finalBpm <= 56 ? 'Athlete' : finalBpm <= 62 ? 'Below Average' : finalBpm <= 66 ? 'Great' : finalBpm <= 70 ? 'Great' : finalBpm <= 75 ? 'Average' : finalBpm <= 82 ? 'Below Average' : 'Poor';
+        } else if (patientData.age >= 46 && patientData.age <= 55) {
+            conditionState = finalBpm <= 57 ? 'Athlete' : finalBpm <= 63 ? 'Below Average' : finalBpm <= 67 ? 'Great' : finalBpm <= 71 ? 'Great' : finalBpm <= 76 ? 'Average' : finalBpm <= 83 ? 'Below Average' : 'Poor';
+        } else if (patientData.age >= 56 && patientData.age <= 65) {
+            conditionState = finalBpm <= 56 ? 'Athlete' : finalBpm <= 61 ? 'Below Average' : finalBpm <= 67 ? 'Great' : finalBpm <= 71 ? 'Great' : finalBpm <= 75 ? 'Average' : finalBpm <= 81 ? 'Below Average' : 'Poor';
+        } else if (patientData.age > 65) {
+            conditionState = finalBpm <= 55 ? 'Athlete' : finalBpm <= 61 ? 'Below Average' : finalBpm <= 65 ? 'Great' : finalBpm <= 69 ? 'Great' : finalBpm <= 73 ? 'Average' : finalBpm <= 79 ? 'Below Average' : 'Poor';
+        }
+      } else if (patientData && patientData.gender === 'female') {
+          if (patientData.age >= 18 && patientData.age <= 25) {
+              conditionState = finalBpm > 60 ? 'Athlete' : finalBpm > 65 ? 'Below Average' : finalBpm > 69 ? 'Great' : finalBpm > 73 ? 'Great' : finalBpm > 78 ? 'Average' : finalBpm > 84 ? 'Below Average' : 'Poor';
+          } else if (patientData.age >= 26 && patientData.age <= 35) {
+              conditionState = finalBpm > 59 ? 'Athlete' : finalBpm > 64 ? 'Below Average' : finalBpm > 68 ? 'Great' : finalBpm > 72 ? 'Great' : finalBpm > 76 ? 'Average' : finalBpm > 82 ? 'Below Average' : 'Poor';
+          } else if (patientData.age >= 36 && patientData.age <= 45) {
+              conditionState = finalBpm > 59 ? 'Athlete' : finalBpm > 64 ? 'Below Average' : finalBpm > 69 ? 'Great' : finalBpm > 73 ? 'Great' : finalBpm > 78 ? 'Average' : finalBpm > 84 ? 'Below Average' : 'Poor';
+          } else if (patientData.age >= 46 && patientData.age <= 55) {
+              conditionState = finalBpm > 60 ? 'Athlete' : finalBpm > 65 ? 'Below Average' : finalBpm > 69 ? 'Great' : finalBpm > 73 ? 'Great' : finalBpm > 77 ? 'Average' : finalBpm > 83 ? 'Below Average' : 'Poor';
+          } else if (patientData.age >= 56 && patientData.age <= 65) {
+              conditionState = finalBpm > 59 ? 'Athlete' : finalBpm > 64 ? 'Below Average' : finalBpm > 68 ? 'Great' : finalBpm > 73 ? 'Great' : finalBpm > 77 ? 'Average' : finalBpm > 83 ? 'Below Average' : 'Poor';
+          } else if (patientData.age > 65) {
+              conditionState = finalBpm > 59 ? 'Athlete' : finalBpm > 64 ? 'Below Average' : finalBpm > 68 ? 'Great' : finalBpm > 72 ? 'Great' : finalBpm > 76 ? 'Average' : finalBpm > 84 ? 'Below Average' : 'Poor';
+          }
+      }
+      
+      setConditionState(conditionState);
+      return conditionState;
+  }
+  
   const handleSubmit = async () => {
     try {
       const currentDate = new Date().toLocaleDateString();
@@ -69,9 +106,12 @@ export default function HeartRate() {
         console.error('Patient data not available.');
         return;
       }
+      
+      let conditionState = calculateConditionState(finalBpm);
 
       const newBpmData = {
-        bpmValue: finalBpm
+        bpmValue: finalBpm,
+        finalConditionState: conditionState
       };
 
       const existingBpm = patientData.bpm || {};
@@ -110,6 +150,7 @@ export default function HeartRate() {
               animate={{ y: 20 }}
               transition={{ type: "spring", stiffness: 1000 }}>
               <p>BPM</p>
+              <p>status: {conditionState}</p>
               <h5>{finalBpm}</h5>
               <div className={styles.buttons}>
                 <button onClick={handleSubmit}><span>&#128505;</span> Submit</button>
@@ -119,6 +160,7 @@ export default function HeartRate() {
                   setBpm(0)
                   setBufferIndex(0)
                   setFinalBpm(0)
+                  setConditionState(calculateConditionState(finalBpm))
                   }}> <span>&#120;</span> Retry</button>
               </div>
             </motion.div>

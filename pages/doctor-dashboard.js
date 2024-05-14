@@ -82,50 +82,50 @@ const renderDailyGraph = () => {
         <Scatter
             style={{ padding: '10px 20px' }}
             data={{
-                datasets: [
-                    {
-                        label: 'Daily BPM Data',
-                        data: Object.entries(bpmData[selectedDate]).map(([time, { bpmValue }]) => ({
-                            x: moment(time, 'HH:mm:ss').toDate(),
-                            y: bpmValue || 0,
-                        })),
-                        pointRadius: 6,
-                        pointBackgroundColor: ctx => {
-                            const value = ctx.dataset.data[ctx.dataIndex].y;
-                            if (value >= 0 && value <= 40) {
-                                return '#eefa05';
-                              } else if (value >= 41 && value <= 70) {
-                                  return '#2afa05';
-                              } else if (value >= 71 && value <= 90) {
-                                  return '#fc0303';
-                              } else {
-                                  return '#0452ce';
-                              }
-                        },
-                    },
-                ],
+              datasets: [
+                {
+                  label: 'Daily BPM Data',
+                  data: Object.entries(bpmData[selectedDate]).sort(([timeA], [timeB]) => moment(timeA, 'HH:mm:ss').diff(moment(timeB, 'HH:mm:ss'))).map(([time, { bpmValue }]) => ({
+                    x: moment(time, 'HH:mm:ss').toDate(), // Convert time string to Date object
+                    y: bpmValue || 0,
+                  })),
+                  fill: false, // Ensure the line is not filled
+                  borderColor: '#0452ce', // Line color
+                  borderWidth: 2, // Line width
+                  pointRadius: 4, // Point radius
+                  pointBackgroundColor: '#0452ce', // Point color
+                  pointBorderWidth: 1, // Point border width
+                  pointHoverRadius: 6, // Point hover radius
+                },
+              ],
             }}
             options={{
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: {
-                            unit: 'minute',
-                        },
-                        title: {
-                            display: true,
-                            text: 'Time',
-                        },
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'BPM Value',
-                        },
-                    },
+              scales: {
+                x: {
+                  type: 'time',
+                  time: {
+                    unit: 'minute',
+                    tooltipFormat: 'h:mm A', // Format for tooltip display
+                  },
+                  title: {
+                    display: true,
+                    text: 'Time',
+                  },
                 },
+                y: {
+                  title: {
+                    display: true,
+                    text: 'BPM Value',
+                  },
+                },
+              },
+              plugins: {
+                legend: {
+                  display: false, // Hide legend
+                },
+              },
             }}
-        />
+          />
     );
 };
 
