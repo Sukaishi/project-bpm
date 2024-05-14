@@ -21,7 +21,7 @@ export default function HeartRate() {
   const [conditionState, setConditionState] = useState('');
 
   useEffect(() => {
-    const socket = io('http://localhost:5000');
+    const socket = io('https://project-bpm.onrender.com/heart-rate');
 
     socket.on('bpm_update', ({ bpm, bufferIndex }) => {
       setBpm(bpm);
@@ -110,7 +110,7 @@ export default function HeartRate() {
       let conditionState = calculateConditionState(finalBpm);
 
       const newBpmData = {
-        bpmValue: finalBpm,
+        bpmValue: finalBpm, //add calculatation based on age. 
         finalConditionState: conditionState
       };
 
@@ -169,8 +169,8 @@ export default function HeartRate() {
           <div className={styles.showCard}>
 
             <div className={styles.videoContainer}>
-              <iframe className={styles.faceVideo} src="http://127.0.0.1:5000/face_detection" scrolling="no" width="600" height="500" frameBorder="0"></iframe>
-              <iframe className={styles.bpmVideo} src="http://127.0.0.1:5000/bpm_detection" scrolling="no" width="190" height="130" frameBorder="0"></iframe>
+              <iframe className={styles.faceVideo} src="http://project-bpm.onrender.com/face_detection" scrolling="no" width="600" height="500" frameBorder="0"></iframe>
+              <iframe className={styles.bpmVideo} src="http://project-bpm.onrender.com/bpm_detection" scrolling="no" width="190" height="130" frameBorder="0"></iframe>
             </div>
 
             <div className={styles.bpmCounter}>
