@@ -5,7 +5,7 @@ from flask import Flask, Response
 from flask_socketio import SocketIO
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="http://localhost:3000")
+socketio = SocketIO(app, cors_allowed_origins="https://project-bpm.onrender.com")
 
 # Helper Methods
 def buildGauss(frame, levels):
