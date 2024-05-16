@@ -91,7 +91,7 @@ def bpm_detection():
             
             # Perform face detection
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5)
+            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=6)
             
             # Eyes detected, proceed with normal BPM detection
             videoGauss[bufferIndex] = buildGauss(detectionFrame, levels+1)[levels]
@@ -176,7 +176,7 @@ def face_detection():
 
             # Perform face detection
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5)
+            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=6)
 
             for (x, y, w, h) in faces:
                 # Draw rectangle around faces with specified styling
