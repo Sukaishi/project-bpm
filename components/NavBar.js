@@ -104,7 +104,7 @@ const Navbar = () => {
           <li>
             <Link className={styles.homepageLink} href={userEmail ? `/${dashboard}` : "/"}>
               <Image className={styles.logoImage} src={logo} alt='Medical Consultation Logo'/>
-              Medical Consultation
+              Non-Contact Heartrate Measurement System
             </Link>
           </li>
 

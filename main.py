@@ -24,10 +24,10 @@ def reconstructFrame(pyramid, index, levels):
 
 # Webcam Parameters
 webcam = cv2.VideoCapture(0)
-realWidth = 320
-realHeight = 240
-videoWidth = 160
-videoHeight = 120
+realWidth = 640
+realHeight = 480
+videoWidth = 320
+videoHeight = 240
 videoChannels = 3
 videoFrameRate = 30
 webcam.set(3, realWidth)
@@ -91,7 +91,7 @@ def bpm_detection():
             
             # Perform face detection
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
+            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5)
             
             # Eyes detected, proceed with normal BPM detection
             videoGauss[bufferIndex] = buildGauss(detectionFrame, levels+1)[levels]
@@ -176,7 +176,7 @@ def face_detection():
 
             # Perform face detection
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
+            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5)
 
             for (x, y, w, h) in faces:
                 # Draw rectangle around faces with specified styling

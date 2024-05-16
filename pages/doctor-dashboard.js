@@ -6,15 +6,14 @@ import { useRouter } from 'next/router';
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import { db } from '../firebaseConfig';
 import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
-
-import { Chart, LinearScale, PointElement, Tooltip, Legend, TimeScale } from 'chart.js';
-import { Scatter } from 'react-chartjs-2';
+import { Chart, LineController, LineElement, CategoryScale } from 'chart.js';
+import { Line } from 'react-chartjs-2';
 import moment from 'moment';
 import 'chartjs-adapter-moment';
 
 
 
-Chart.register(LinearScale, PointElement, Tooltip, Legend, TimeScale);
+Chart.register(LineController, LineElement, CategoryScale);
 
 const DoctorDashboard = () => {
   const [patientsData, setPatientsData] = useState([]);
@@ -59,7 +58,6 @@ const handleTimeRangeChange = range => {
     setTimeRange(range);
 };
 
-
 const renderGraph = () => {
     if (selectedDate && bpmData[selectedDate] !== undefined) {
         switch (timeRange) {
@@ -79,7 +77,7 @@ const renderGraph = () => {
 
 const renderDailyGraph = () => {
     return (
-        <Scatter
+        <Line
             style={{ padding: '10px 20px' }}
             data={{
               datasets: [
@@ -135,7 +133,7 @@ const renderWeeklyGraph = () => {
 
     if (weeklyData) {
         return (
-            <Scatter
+            <Line
                 style={{ padding: '10px 20px' }}
                 data={{
                     datasets: [
@@ -187,7 +185,7 @@ const renderMonthlyGraph = () => {
 
     if (monthlyData.length > 0) {
         return (
-            <Scatter
+            <Line
                 style={{ padding: '10px 20px' }}
                 data={{
                     datasets: [

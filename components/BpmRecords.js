@@ -46,6 +46,11 @@ const BpmRecords = ({ showTable, setShowTable }) => {
       header: 'Heart Rate',
       size: 150,
     },
+    {
+      accessorKey: 'finalConditionState',
+      header: 'Condition',
+      size: 150,
+    },
   ], []);
 
   const formattedData = useMemo(() => {
@@ -55,6 +60,7 @@ const BpmRecords = ({ showTable, setShowTable }) => {
           date: moment(date, 'M/D/YYYY').format('MMMM D, YYYY'),
           time: moment(time, 'h:mm:ss A').format('h:mm A'),
           bpmValue: bpmRecord.bpmValue,
+          finalConditionState: bpmRecord.finalConditionState
         })) : []
       ) : []
     );
@@ -100,6 +106,6 @@ const BpmRecords = ({ showTable, setShowTable }) => {
       ) : null}
     </>
   );
-};
+}; 
 
 export default BpmRecords;

@@ -114,6 +114,7 @@ const PatientDashboard = () => {
         setAverageBpm(null);
     }
   }, [selectedDate, bpmData, sendAverageBpmToFirestore]);
+  
 
   const handleDateChange = event => {
     setSelectedDate(event.target.value);
@@ -235,22 +236,6 @@ const PatientDashboard = () => {
               </div>
             </div>
             <hr />
-            <span>Coming Soon</span>
-            <div className={styles.comingCards}>
-              {cardTitle.map((title, index) => (
-                <motion.div key={index} className={styles.otherCard}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.9 }}>
-                  <Link href={'#'}>
-                    <Image src={tempImage} alt="Card Image" />
-                    <div className={styles.content}>
-                      <h2>{title}</h2>
-                      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet qui recusandae debitis!</p>
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
           </div>
         </div>
       </div>
