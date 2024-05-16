@@ -61,6 +61,13 @@ export default function HeartRate() {
 
   }, []);
 
+  useEffect(() => {
+    if (finalBpm > 0 && patientData) {
+      const condition = calculateConditionState(finalBpm);
+      setConditionState(condition);
+    }
+  }, [finalBpm, patientData]);
+
   const calculateConditionState = (finalBpm) => {
   let conditionState = '';
       if (patientData && patientData.gender === 'male') {
@@ -160,7 +167,7 @@ export default function HeartRate() {
                   setBpm(0)
                   setBufferIndex(0)
                   setFinalBpm(0)
-                  setConditionState(calculateConditionState(finalBpm))
+                  setConditionState('')
                   }}> <span>&#120;</span> Retry</button>
               </div>
             </motion.div>
