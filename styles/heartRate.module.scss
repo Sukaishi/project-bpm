@@ -1,3 +1,67 @@
+.commonStyleCondition{
+    padding: 10px 40px;
+    border-radius: 20px;
+    color: white;
+}
+    
+
+
+.athlete {
+    background-color: #00ff00; /* Green for Athlete */
+  }
+  
+  .excellent {
+    background-color: #7fff00; /* Chartreuse for Excellent */
+  }
+  
+  .great {
+    background-color: #ffff00; /* Yellow for Great */
+  }
+  
+  .good {
+    background-color: #ffdf00; /* Gold for Good */
+  }
+  
+  .average {
+    background-color: #ffbf00; /* Amber for Average */
+  }
+  
+  .belowAverage {
+    background-color: #ff7f50; /* Coral for Below Average */
+  }
+  
+  .poor {
+    background-color: red; /* Orange Red for Poor */
+  }
+
+  .athleteText {
+    color: #00ff00; /* Green for Athlete */
+  }
+  
+  .excellentText {
+    color: #7fff00; /* Chartreuse for Excellent */
+  }
+  
+  .greatText {
+    color: #ffff00; /* Yellow for Great */
+  }
+  
+  .goodText {
+    color: #ffdf00; /* Gold for Good */
+  }
+  
+  .averageText {
+    color: #ffbf00; /* Amber for Average */
+  }
+  
+  .belowAverageText {
+    color: #ff7f50; /* Coral for Below Average */
+  }
+  
+  .poorText {
+    color: red; /* Orange Red for Poor */
+  }
+
 .mainContainer{
     width: 100%;
     height: 90.85vh;
@@ -71,6 +135,39 @@
         
     }
 
+    .stopCounter{
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .stopButton{
+        background-color: white;
+        padding: 15px 32px;
+        border: none;
+        border-radius: 30px;
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.1), 0 6px 20px 0 rgba(0,0,0,0.2);
+        color: rgb(222, 0, 56);
+        font-weight: bold;
+        transition: 0.2s;
+    }
+
+    .stopButton:hover{
+        padding: 17px 34px;
+        transition: 0.2s;
+    }
+
+    .stopButtonDisabled{
+        background-color: #e9e9e9;
+        padding: 15px 32px;
+        border: none;
+        border-radius: 30px;
+        color: #959595;
+        font-weight: bold;
+    }
+
     .modalBPM{
         width: 100%;
         height: 100%;
@@ -103,15 +200,14 @@
             padding: 1em 2em 1em 1em;
 
             p{
-                font-size: 2.7em;
+                font-size: 2em;
                 font-weight: bolder;
-                font-family: monospace;
+                font-family: Arial, Helvetica, sans-serif;
             }
             
             h5{
                 font-size: 7.5em;
                 font-weight: bolder;
-                color: rgb(0, 177, 0);
                 font-family: cursive;
                 margin-bottom: 0.2em;
             }

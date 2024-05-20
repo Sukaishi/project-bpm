@@ -29,7 +29,7 @@ realHeight = 480
 videoWidth = 320
 videoHeight = 240
 videoChannels = 3
-videoFrameRate = 30
+videoFrameRate = 15
 webcam.set(3, realWidth)
 webcam.set(4, realHeight)
 alphaColor = 0.4
@@ -61,7 +61,7 @@ mask = (frequencies >= minFrequency) & (frequencies <= maxFrequency)
 # Heart Rate Calculation Variables
 bpmCalculationFrequency = 15
 bpmBufferIndex = 0
-bpmBufferSize = 10
+bpmBufferSize = 5
 bpmBuffer = np.zeros((bpmBufferSize))
 
 @socketio.on('connect')
@@ -91,7 +91,7 @@ def bpm_detection():
             
             # Perform face detection
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=6)
+            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
             
             # Eyes detected, proceed with normal BPM detection
             videoGauss[bufferIndex] = buildGauss(detectionFrame, levels+1)[levels]
@@ -158,6 +158,7 @@ def bpm_detection():
 
     return Response(generate(bufferIndex, bpmBufferIndex), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+
 @app.route('/face_detection')
 def face_detection():
     # Initialize face cascade classifier
@@ -176,7 +177,7 @@ def face_detection():
 
             # Perform face detection
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=6)
+            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
 
             for (x, y, w, h) in faces:
                 # Draw rectangle around faces with specified styling
@@ -206,7 +207,7 @@ def face_detection():
 
             # Create a transparent green rectangle for the FPS text
             fps_overlay = frame.copy()
-            cv2.rectangle(fps_overlay, (0, 3), (80, 38), (0, 0, 0), -1)
+            cv2.rectangle(fps_overlay, (0, 3), (60, 18), (0, 0, 0), -1)
             cv2.addWeighted(fps_overlay, alphaColor, frame, 1 - alphaColor, 0, frame)
             cv2.putText(frame, fps_text, (5, 15), cv2.FONT_HERSHEY_PLAIN, 0.7, (255, 255, 255), 1)
 

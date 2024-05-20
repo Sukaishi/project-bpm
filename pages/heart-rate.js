@@ -11,6 +11,7 @@ import hearBeat from '../public/heartbeat.gif';
 import Cookies from 'js-cookie';
 import moment from 'moment';
 import io from 'socket.io-client';
+import LinearProgress from '@mui/joy/LinearProgress';
 
 export default function HeartRate() {
   const [bpm, setBpm] = useState(0);
@@ -19,6 +20,8 @@ export default function HeartRate() {
   const [showFinalBpm, setShowFinalBpm] = useState(false);
   const [patientData, setPatientData] = useState(null);
   const [conditionState, setConditionState] = useState('');
+  const [timer, setTimer] = useState(0);
+  const [isButtonClickable, setIsButtonClickable] = useState(false);
 
   useEffect(() => {
     const socket = io('http://localhost:5000');
@@ -27,9 +30,14 @@ export default function HeartRate() {
       setBpm(bpm);
       setBufferIndex(bufferIndex);
 
-      if (bufferIndex === 149 && bpm != 0 && !(bpm > 100)) {
+      if (bufferIndex === 149 && !(bpm < 40) && !(bpm > 220 - patientData.age)) {
         setShowFinalBpm(true);
         setFinalBpm(bpm);
+      }
+
+      if (bpm === 0 && bufferIndex === 0) {
+        setTimer(0);
+        setIsButtonClickable(false);
       }
     });
 
@@ -68,35 +76,63 @@ export default function HeartRate() {
     }
   }, [finalBpm, patientData]);
 
+  const handleShowBpm = () => {
+    setShowFinalBpm(true);
+    setFinalBpm(bpm);
+  };
+
+  const resetTimer = () => {
+    setTimer(0);
+    setIsButtonClickable(false);
+  };
+
+  useEffect(() => {
+    let intervalId;
+    if (bpm !== 0 && !isButtonClickable) {
+      intervalId = setInterval(() => {
+        setTimer((prevTimer) => {
+          if (prevTimer >= 5) {
+            clearInterval(intervalId);
+            setIsButtonClickable(true);
+            return prevTimer;
+          }
+          return prevTimer + 1;
+        });
+      }, 1000);
+    }
+
+    return () => clearInterval(intervalId);
+  }, [bpm, isButtonClickable]);
+
   const calculateConditionState = (finalBpm) => {
   let conditionState = '';
       if (patientData && patientData.gender === 'male') {
         if (patientData.age >= 18 && patientData.age <= 25) {
-            conditionState = finalBpm <= 55 ? 'Athlete' : finalBpm <= 61 ? 'Below Average' : finalBpm <= 65 ? 'Great' : finalBpm <= 69 ? 'Great' : finalBpm <= 73 ? 'Average' : finalBpm <= 81 ? 'Below Average' : 'Poor';
+            conditionState = finalBpm <= 55 ? 'Athlete' : finalBpm <= 61 ? 'Excellent' : finalBpm <= 65 ? 'Great' : finalBpm <= 69 ? 'Good' : finalBpm <= 73 ? 'Average' : finalBpm <= 81 ? 'Below Average' : 'Poor';
         } else if (patientData.age >= 26 && patientData.age <= 35) {
-            conditionState = finalBpm <= 54 ? 'Athlete' : finalBpm <= 61 ? 'Below Average' : finalBpm <= 65 ? 'Great' : finalBpm <= 70 ? 'Great' : finalBpm <= 74 ? 'Average' : finalBpm <= 81 ? 'Below Average' : 'Poor';
+            conditionState = finalBpm <= 54 ? 'Athlete' : finalBpm <= 61 ? 'Excellent' : finalBpm <= 65 ? 'Great' : finalBpm <= 70 ? 'Good' : finalBpm <= 74 ? 'Average' : finalBpm <= 81 ? 'Below Average' : 'Poor';
         } else if (patientData.age >= 36 && patientData.age <= 45) {
-            conditionState = finalBpm <= 56 ? 'Athlete' : finalBpm <= 62 ? 'Below Average' : finalBpm <= 66 ? 'Great' : finalBpm <= 70 ? 'Great' : finalBpm <= 75 ? 'Average' : finalBpm <= 82 ? 'Below Average' : 'Poor';
+            conditionState = finalBpm <= 56 ? 'Athlete' : finalBpm <= 62 ? 'Excellent' : finalBpm <= 66 ? 'Great' : finalBpm <= 70 ? 'Good' : finalBpm <= 75 ? 'Average' : finalBpm <= 82 ? 'Below Average' : 'Poor';
         } else if (patientData.age >= 46 && patientData.age <= 55) {
-            conditionState = finalBpm <= 57 ? 'Athlete' : finalBpm <= 63 ? 'Below Average' : finalBpm <= 67 ? 'Great' : finalBpm <= 71 ? 'Great' : finalBpm <= 76 ? 'Average' : finalBpm <= 83 ? 'Below Average' : 'Poor';
+            conditionState = finalBpm <= 57 ? 'Athlete' : finalBpm <= 63 ? 'Excellent' : finalBpm <= 67 ? 'Great' : finalBpm <= 71 ? 'Good' : finalBpm <= 76 ? 'Average' : finalBpm <= 83 ? 'Below Average' : 'Poor';
         } else if (patientData.age >= 56 && patientData.age <= 65) {
-            conditionState = finalBpm <= 56 ? 'Athlete' : finalBpm <= 61 ? 'Below Average' : finalBpm <= 67 ? 'Great' : finalBpm <= 71 ? 'Great' : finalBpm <= 75 ? 'Average' : finalBpm <= 81 ? 'Below Average' : 'Poor';
+            conditionState = finalBpm <= 56 ? 'Athlete' : finalBpm <= 61 ? 'Excellent' : finalBpm <= 67 ? 'Great' : finalBpm <= 71 ? 'Good' : finalBpm <= 75 ? 'Average' : finalBpm <= 81 ? 'Below Average' : 'Poor';
         } else if (patientData.age > 65) {
-            conditionState = finalBpm <= 55 ? 'Athlete' : finalBpm <= 61 ? 'Below Average' : finalBpm <= 65 ? 'Great' : finalBpm <= 69 ? 'Great' : finalBpm <= 73 ? 'Average' : finalBpm <= 79 ? 'Below Average' : 'Poor';
+            conditionState = finalBpm <= 55 ? 'Athlete' : finalBpm <= 61 ? 'Excellent' : finalBpm <= 65 ? 'Great' : finalBpm <= 69 ? 'Good' : finalBpm <= 73 ? 'Average' : finalBpm <= 79 ? 'Below Average' : 'Poor';
         }
       } else if (patientData && patientData.gender === 'female') {
           if (patientData.age >= 18 && patientData.age <= 25) {
-              conditionState = finalBpm > 60 ? 'Athlete' : finalBpm > 65 ? 'Below Average' : finalBpm > 69 ? 'Great' : finalBpm > 73 ? 'Great' : finalBpm > 78 ? 'Average' : finalBpm > 84 ? 'Below Average' : 'Poor';
+              conditionState = finalBpm <= 60 ? 'Athlete' : finalBpm <= 65 ? 'Excellent' : finalBpm <= 69 ? 'Great' : finalBpm <= 73 ? 'Good' : finalBpm <= 78 ? 'Average' : finalBpm <= 84 ? 'Below Average' : 'Poor';
           } else if (patientData.age >= 26 && patientData.age <= 35) {
-              conditionState = finalBpm > 59 ? 'Athlete' : finalBpm > 64 ? 'Below Average' : finalBpm > 68 ? 'Great' : finalBpm > 72 ? 'Great' : finalBpm > 76 ? 'Average' : finalBpm > 82 ? 'Below Average' : 'Poor';
+              conditionState = finalBpm <= 59 ? 'Athlete' : finalBpm <= 64 ? 'Excellent' : finalBpm <= 68 ? 'Great' : finalBpm <= 72 ? 'Good' : finalBpm <= 76 ? 'Average' : finalBpm <= 82 ? 'Below Average' : 'Poor';
           } else if (patientData.age >= 36 && patientData.age <= 45) {
-              conditionState = finalBpm > 59 ? 'Athlete' : finalBpm > 64 ? 'Below Average' : finalBpm > 69 ? 'Great' : finalBpm > 73 ? 'Great' : finalBpm > 78 ? 'Average' : finalBpm > 84 ? 'Below Average' : 'Poor';
+              conditionState = finalBpm <= 59 ? 'Athlete' : finalBpm <= 64 ? 'Excellent' : finalBpm <= 69 ? 'Great' : finalBpm <= 73 ? 'Good' : finalBpm <= 78 ? 'Average' : finalBpm <= 84 ? 'Below Average' : 'Poor';
           } else if (patientData.age >= 46 && patientData.age <= 55) {
-              conditionState = finalBpm > 60 ? 'Athlete' : finalBpm > 65 ? 'Below Average' : finalBpm > 69 ? 'Great' : finalBpm > 73 ? 'Great' : finalBpm > 77 ? 'Average' : finalBpm > 83 ? 'Below Average' : 'Poor';
+              conditionState = finalBpm <= 60 ? 'Athlete' : finalBpm <= 65 ? 'Excellent' : finalBpm <= 69 ? 'Great' : finalBpm <= 73 ? 'Good' : finalBpm <= 77 ? 'Average' : finalBpm <= 83 ? 'Below Average' : 'Poor';
           } else if (patientData.age >= 56 && patientData.age <= 65) {
-              conditionState = finalBpm > 59 ? 'Athlete' : finalBpm > 64 ? 'Below Average' : finalBpm > 68 ? 'Great' : finalBpm > 73 ? 'Great' : finalBpm > 77 ? 'Average' : finalBpm > 83 ? 'Below Average' : 'Poor';
+              conditionState = finalBpm <= 59 ? 'Athlete' : finalBpm <= 64 ? 'Excellent' : finalBpm <= 68 ? 'Great' : finalBpm <= 73 ? 'Good' : finalBpm <= 77 ? 'Average' : finalBpm <= 83 ? 'Below Average' : 'Poor';
           } else if (patientData.age > 65) {
-              conditionState = finalBpm > 59 ? 'Athlete' : finalBpm > 64 ? 'Below Average' : finalBpm > 68 ? 'Great' : finalBpm > 72 ? 'Great' : finalBpm > 76 ? 'Average' : finalBpm > 84 ? 'Below Average' : 'Poor';
+              conditionState = finalBpm <= 59 ? 'Athlete' : finalBpm <= 64 ? 'Excellent' : finalBpm <= 68 ? 'Great' : finalBpm <= 72 ? 'Good' : finalBpm <= 76 ? 'Average' : finalBpm <= 84 ? 'Below Average' : 'Poor';
           }
       }
       
@@ -157,10 +193,26 @@ export default function HeartRate() {
               animate={{ y: 20 }}
               transition={{ type: "spring", stiffness: 1000 }}>
               <p>BPM</p>
-              <p>status: {conditionState}</p>
-              <h5>{finalBpm}</h5>
+              <h5 className={conditionState === 'Athlete' ? styles.athleteText :
+              conditionState === 'Excellent' ? styles.excellentText :
+              conditionState === 'Great' ? styles.greatText :
+              conditionState === 'Good' ? styles.goodText :
+              conditionState === 'Average' ? styles.averageText :
+              conditionState === 'Below Average' ? styles.belowAverageText :
+              conditionState === 'Poor' ? styles.poorText : ''}>{finalBpm}</h5>
+              <p className={styles.statusText}>Status:</p>
+              <p className={`${styles.commonStyleCondition} ${
+              conditionState === 'Athlete' ? styles.athlete :
+              conditionState === 'Excellent' ? styles.excellent :
+              conditionState === 'Great' ? styles.great :
+              conditionState === 'Good' ? styles.good :
+              conditionState === 'Average' ? styles.average :
+              conditionState === 'Below Average' ? styles.belowAverage :
+              conditionState === 'Poor' ? styles.poor : ''}`}>
+              {conditionState}
+              </p>
               <div className={styles.buttons}>
-                <button onClick={handleSubmit}><span>&#128505;</span> Submit</button>
+                <button onClick={handleSubmit}> Submit</button>
                 <button onClick={() => { 
                   // window.location.href = '/heart-rate';
                   setShowFinalBpm(false)
@@ -168,7 +220,8 @@ export default function HeartRate() {
                   setBufferIndex(0)
                   setFinalBpm(0)
                   setConditionState('')
-                  }}> <span>&#120;</span> Retry</button>
+                  resetTimer()
+                  }}> Retry</button>
               </div>
             </motion.div>
           </div>
@@ -180,21 +233,42 @@ export default function HeartRate() {
               <iframe className={styles.bpmVideo} src="http://127.0.0.1:5000/bpm_detection" scrolling="no" width="190" height="130" frameBorder="0"></iframe>
             </div>
 
-            <div className={styles.bpmCounter}>
-              <CircularProgressbarWithChildren className={styles.progressBar} value={bufferIndex}
-                styles={buildStyles({
-                  strokeLinecap: 'butt',
-                  pathTransitionDuration: 0.1,
-                  transition: 'stroke-dashoffset 0.5s ease 0s',
-                  transform: 'rotate(0.25turn)',
-                  transformOrigin: 'center center',
-                  pathColor: `rgba(222, 0, 56, ${bufferIndex / 100})`,
-                  trailColor: '#ffebeb',
-                })}
-              >
-                <Image src={hearBeat} alt='Heart Beat' />
-                <span>{bpm}</span>
-              </CircularProgressbarWithChildren>
+            <div>
+              <div className={styles.bpmCounter}>
+                <CircularProgressbarWithChildren className={styles.progressBar} value={(bufferIndex)}
+                  styles={buildStyles({
+                    strokeLinecap: 'butt',
+                    pathTransitionDuration: 0.1,
+                    transition: 'stroke-dashoffset 0.5s ease 0s',
+                    transform: 'rotate(0.25turn)',
+                    transformOrigin: 'center center',
+                    pathColor: `rgba(222, 0, 56, ${bufferIndex / 100})`,
+                    trailColor: '#ffebeb',
+                  })}
+                >
+                  <Image src={hearBeat} alt='Heart Beat' />
+                  <span>{bpm}</span>
+                </CircularProgressbarWithChildren>
+              </div>
+              <div>
+                <div className={styles.stopCounter}>
+                  <LinearProgress 
+                  determinate value={(timer/5)*100} 
+                  size="lg"
+                  sx={{
+                    "--LinearProgress-thickness": "30px",
+                    color: 'rgb(222, 0, 56)',
+                    bgcolor: 'rgb(222, 0, 56, 0.1)',
+                    width: '80%',
+                  }}
+                  />
+                </div>
+                <div className={styles.stopCounter}>
+                  <button disabled={!isButtonClickable} onClick={handleShowBpm} className={isButtonClickable ? styles.stopButton : styles.stopButtonDisabled}>
+                    Stop
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}
