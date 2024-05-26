@@ -3,7 +3,18 @@
     border-radius: 20px;
     color: white;
 }
-    
+
+.tButton {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    span{
+        font-family: Arial, Helvetica, sans-serif;
+    }
+}
 
 
 .athlete {
@@ -72,12 +83,83 @@
     .showCard{
         display: flex;
 
+        .brightnessStatus{
+            margin: 0em 1em;
+            width: 8.6em;
+            padding: 10px;
+            height: 1.5em;
+            background: #ff7f50;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-radius: 40px;
+
+                img{
+                    margin-right: 8px;
+                }
+        }
+
+        .distanceStatus{
+            margin: 0.5em 1em;
+            padding: 10px;
+            width: 8.6em;
+            height: 1.5em;
+            background: #ff7f50;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-radius: 40px;
+
+                img{
+                    margin-right: 8px;
+                }
+        }
+
+        .bpmTimer{
+            padding: 10px;
+            border-radius: 10px;
+            margin: 0 1em;
+            box-shadow: 0px 0px 10px -6px rgba(0,0,0,1);
+            background-color: white;
+            border: 1px solid rgb(228, 228, 228);
+            margin-top: 0.5em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
         .videoContainer{
             width: 600px;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
+
+            .video {
+                width: 600px;
+                height: 500px;
+                transition: width 0.3s, height 0.3s; /* Smooth transition */
+                border-radius: 1em;
+              }
+              
+              .hidden {
+                width: 0;
+                height: 0;
+                top: 0;
+                right: 0;
+                position: absolute;
+                border-radius: 1em;
+              }
+              
+              .visible {
+                width: 600px;
+                height: 500px;
+                top: 0;
+                right: 0;
+                position: absolute;
+                border-radius: 1em;
+              }
 
             iframe{
                 ::-webkit-scrollbar {
@@ -92,7 +174,7 @@
             }
     
             iframe:last-child{
-                border-radius: 0 1em 0 0;
+                border-radius: 1em;
             }
     
             .bpmVideo{
@@ -208,17 +290,17 @@
             h5{
                 font-size: 7.5em;
                 font-weight: bolder;
-                font-family: cursive;
+                font-family: Arial, Helvetica, sans-serif;
                 margin-bottom: 0.2em;
             }
 
             button{
+                margin-top: 0.4em;
                 background-color: transparent;
                 border: 0;
                 padding: 0;
-                font-size: 1.6em;
-                font-weight: bold;
-                font-family: monospace;
+                font-size: 1em;
+                font-family: Arial, Helvetica, sans-serif;
 
                 &:hover{
                     cursor: pointer;

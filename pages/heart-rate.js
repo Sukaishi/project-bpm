@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, toggleButton } from 'react';
 import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
@@ -12,6 +12,11 @@ import Cookies from 'js-cookie';
 import moment from 'moment';
 import io from 'socket.io-client';
 import LinearProgress from '@mui/joy/LinearProgress';
+import Switch from 'react-switch';
+import BrightnessIcon from '../public/brightness.svg';
+import DistanceIcon from '../public/distance.svg';
+import FaceIcon from '../public/face.svg';
+
 
 export default function HeartRate() {
   const [bpm, setBpm] = useState(0);
@@ -22,6 +27,10 @@ export default function HeartRate() {
   const [conditionState, setConditionState] = useState('');
   const [timer, setTimer] = useState(0);
   const [isButtonClickable, setIsButtonClickable] = useState(false);
+  const [brightnessStatus, setBrightnessStatus] = useState('');
+  const [distanceStatus, setDistanceStatus] = useState('');
+  const [isBpmVideo, setIsBpmVideo] = useState(false);
+  const [faceStatus, setFaceStatus] = useState('');
 
   useEffect(() => {
     const socket = io('http://localhost:5000');
@@ -30,7 +39,7 @@ export default function HeartRate() {
       setBpm(bpm);
       setBufferIndex(bufferIndex);
 
-      if (bufferIndex === 149 && !(bpm < 40) && !(bpm > 220 - patientData.age)) {
+      if (bufferIndex === 149 && !(bpm < 40)) {
         setShowFinalBpm(true);
         setFinalBpm(bpm);
       }
@@ -39,6 +48,18 @@ export default function HeartRate() {
         setTimer(0);
         setIsButtonClickable(false);
       }
+    });
+
+    socket.on('brightness_status', ({ bstatus }) => {
+      setBrightnessStatus(bstatus);
+    });
+
+    socket.on('distance_status', ({ dstatus }) => {
+      setDistanceStatus(dstatus);
+    });
+
+    socket.on('face_status', ({ fstatus }) => {
+      setFaceStatus(fstatus);
     });
 
     const fetchPatientData = async () => {
@@ -91,7 +112,7 @@ export default function HeartRate() {
     if (bpm !== 0 && !isButtonClickable) {
       intervalId = setInterval(() => {
         setTimer((prevTimer) => {
-          if (prevTimer >= 5) {
+          if (prevTimer >= 10) {
             clearInterval(intervalId);
             setIsButtonClickable(true);
             return prevTimer;
@@ -177,6 +198,12 @@ export default function HeartRate() {
     }
   };
 
+  const MAX_BUFFER_INDEX = 149;
+
+  const toggleButton = () => {
+    setIsBpmVideo(prevIsBpmVideo => !prevIsBpmVideo);
+  };
+
   return (
     <>
       <Head>
@@ -229,13 +256,39 @@ export default function HeartRate() {
           <div className={styles.showCard}>
 
             <div className={styles.videoContainer}>
-              <iframe className={styles.faceVideo} src="http://127.0.0.1:5000/face_detection" scrolling="no" width="600" height="500" frameBorder="0"></iframe>
-              <iframe className={styles.bpmVideo} src="http://127.0.0.1:5000/bpm_detection" scrolling="no" width="190" height="130" frameBorder="0"></iframe>
+              <iframe
+              className={styles.faceVideo}
+              src="http://127.0.0.1:5000/face_detection"
+              scrolling="no"
+              width="600"
+              height="500"
+              frameBorder="0"
+              ></iframe>
+              <iframe
+              className={`${styles.video} ${isBpmVideo ? styles.visible : styles.hidden}`}
+              src="http://127.0.0.1:5000/bpm_detection"
+              scrolling="no"
+              width="600"
+              height="500"
+              frameBorder="0"
+              ></iframe>
             </div>
-
             <div>
+              <div className={styles.statusContainer}>
+                <div className={styles.brightnessStatus}>
+                  <span><Image src={BrightnessIcon} alt="Brightness Icon" width={20} height={20} />{brightnessStatus}</span>
+                </div>
+                <div className={styles.distanceStatus}>
+                  <span><Image src={DistanceIcon} alt="Distance Icon" width={20} height={20} />{distanceStatus}</span>
+                </div>
+                <div>
+                  <p>{faceStatus}</p>
+                </div>
+              </div>
               <div className={styles.bpmCounter}>
-                <CircularProgressbarWithChildren className={styles.progressBar} value={(bufferIndex)}
+                <CircularProgressbarWithChildren 
+                  className={styles.progressBar} 
+                  value={(bufferIndex * 100) / MAX_BUFFER_INDEX}
                   styles={buildStyles({
                     strokeLinecap: 'butt',
                     pathTransitionDuration: 0.1,
@@ -253,7 +306,7 @@ export default function HeartRate() {
               <div>
                 <div className={styles.stopCounter}>
                   <LinearProgress 
-                  determinate value={(timer/5)*100} 
+                  determinate value={(timer/10)*100} 
                   size="lg"
                   sx={{
                     "--LinearProgress-thickness": "30px",
@@ -267,6 +320,26 @@ export default function HeartRate() {
                   <button disabled={!isButtonClickable} onClick={handleShowBpm} className={isButtonClickable ? styles.stopButton : styles.stopButtonDisabled}>
                     Stop
                   </button>
+                </div>
+                <div className={styles.tButton}>
+                  <span>Toggle EVM Camera<br/></span>
+                <Switch 
+                  onChange={toggleButton}
+                  checked={isBpmVideo}
+                  offHandleColor="#fff"
+                  offColor="#959595"
+                  onColor="#FCE5EB"
+                  onHandleColor="#DE0038"
+                  handleDiameter={30}
+                  uncheckedIcon={false}
+                  checkedIcon={false}
+                  boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                  activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                  height={20}
+                  width={48}
+                  className="react-switch"
+                  id="material-switch"
+                />
                 </div>
               </div>
             </div>

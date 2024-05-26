@@ -1,6 +1,7 @@
 import { motion } from "framer-motion"
 import Head from 'next/head';
 import Link from 'next/link';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from '../styles/homePage.module.scss'
 
 export default function Home() {

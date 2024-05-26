@@ -63,7 +63,16 @@ const BpmRecords = ({ showTable, setShowTable }) => {
           finalConditionState: bpmRecord.finalConditionState
         })) : []
       ) : []
-    );
+    ).sort((a, b) => {
+      const dateA = moment(a.date, 'MMMM D, YYYY');
+      const dateB = moment(b.date, 'MMMM D, YYYY');
+      if (dateA.isSame(dateB, 'day')) {
+        const timeA = moment(a.time, 'h:mm:ss A');
+        const timeB = moment(b.time, 'h:mm:ss A');
+        return timeA.diff(timeB);
+      }
+      return dateA.diff(dateB);
+    });
   }, [bpmData]);
   
   const table = useMaterialReactTable({
